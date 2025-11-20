@@ -1,7 +1,11 @@
 import { GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { GraphQLContext } from './rootQuery.js';
-import { Profile, User } from './queryTypes.js';
-import { CreateProfileInput, CreateUserInput } from './mutationInputs.js';
+import { Post, Profile, User } from './queryTypes.js';
+import {
+  CreatePostInput,
+  CreateProfileInput,
+  CreateUserInput,
+} from './mutationInputs.js';
 
 interface CreateUserArgs {
   dto: {
@@ -16,6 +20,14 @@ interface CreateProfileArgs {
     yearOfBirth: number;
     userId: string;
     memberTypeId: 'BASIC' | 'BUSINESS';
+  };
+}
+
+interface CreatePostArgs {
+  dto: {
+    title: string;
+    content: string;
+    authorId: string;
   };
 }
 
@@ -41,7 +53,7 @@ export const Mutations = new GraphQLObjectType({
         return newUser;
       },
     },
-    createProfileInput: {
+    createProfile: {
       type: new GraphQLNonNull(Profile),
       args: {
         dto: {
@@ -60,6 +72,26 @@ export const Mutations = new GraphQLObjectType({
         });
 
         return newProfile;
+      },
+    },
+    createPost: {
+      type: new GraphQLNonNull(Post),
+      args: {
+        dto: {
+          type: new GraphQLNonNull(CreatePostInput),
+        },
+      },
+      resolve: async (_, { dto }: CreatePostArgs, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        const newPost = prisma.post.create({
+          data: {
+            title: dto.title,
+            content: dto.content,
+            authorId: dto.authorId,
+          },
+        });
+
+        return newPost;
       },
     },
   }),
