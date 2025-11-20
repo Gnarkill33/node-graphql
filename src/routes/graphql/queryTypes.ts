@@ -1,10 +1,13 @@
 import {
+  GraphQLBoolean,
   GraphQLEnumType,
   GraphQLFloat,
   GraphQLInt,
   GraphQLNonNull,
   GraphQLObjectType,
+  GraphQLString,
 } from 'graphql';
+import { UUIDType } from './types/uuid.js';
 
 export const MemberTypeIdEnum = new GraphQLEnumType({
   name: 'enum',
@@ -23,15 +26,51 @@ export const MemberType = new GraphQLObjectType({
   fields: {
     id: {
       type: new GraphQLNonNull(MemberTypeIdEnum),
-      description: 'The id of the member',
     },
     discount: {
       type: new GraphQLNonNull(GraphQLFloat),
-      description: 'The discount of the member',
     },
     postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
-      description: 'The number of posts per month',
     },
+  },
+});
+
+export const Profile = new GraphQLObjectType({
+  name: 'Profile',
+  fields: {
+    id: {
+      type: new GraphQLNonNull(UUIDType),
+    },
+    isMale: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+    },
+    yearOfBirth: {
+      type: new GraphQLNonNull(GraphQLInt),
+    },
+    memberType: {
+      type: new GraphQLNonNull(MemberType),
+    },
+  },
+});
+
+export const User = new GraphQLObjectType({
+  name: 'User',
+  fields: {
+    id: {
+      type: new GraphQLNonNull(UUIDType),
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    balance: {
+      type: new GraphQLNonNull(GraphQLFloat),
+    },
+    profile: {
+      type: Profile,
+    },
+    // posts: {},
+    // userSubscribedTo: {},
+    // subscribedToUser: {},
   },
 });

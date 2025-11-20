@@ -1,5 +1,5 @@
 import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
-import { MemberType, MemberTypeIdEnum } from './queryTypes.js';
+import { MemberType, MemberTypeIdEnum, User } from './queryTypes.js';
 import { PrismaClient } from '@prisma/client';
 
 export interface GraphQLContext {
@@ -33,6 +33,10 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
           where: { id },
         });
       },
+    },
+    users: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+      resolve: () => {},
     },
   }),
 });
