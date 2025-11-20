@@ -1,5 +1,5 @@
 import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
-import { MemberType, MemberTypeIdEnum, User } from './queryTypes.js';
+import { MemberType, MemberTypeIdEnum, Post, User } from './queryTypes.js';
 import { PrismaClient } from '@prisma/client';
 import { UUIDType } from './types/uuid.js';
 
@@ -53,6 +53,27 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         return prisma.user.findUnique({
+          where: { id },
+        });
+      },
+    },
+    posts: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
+      resolve: async (_, __, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return prisma.post.findMany();
+      },
+    },
+    post: {
+      type: Post,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return prisma.post.findUnique({
           where: { id },
         });
       },
