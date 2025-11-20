@@ -24,7 +24,7 @@ export const MemberTypeIdEnum = new GraphQLEnumType({
 
 export const MemberType = new GraphQLObjectType({
   name: 'MemberType',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(MemberTypeIdEnum),
     },
@@ -34,12 +34,12 @@ export const MemberType = new GraphQLObjectType({
     postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
     },
-  },
+  }),
 });
 
 export const Profile = new GraphQLObjectType({
   name: 'Profile',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(UUIDType),
     },
@@ -52,12 +52,12 @@ export const Profile = new GraphQLObjectType({
     memberType: {
       type: new GraphQLNonNull(MemberType),
     },
-  },
+  }),
 });
 
 export const Post = new GraphQLObjectType({
   name: 'Post',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(UUIDType),
     },
@@ -67,7 +67,7 @@ export const Post = new GraphQLObjectType({
     content: {
       type: new GraphQLNonNull(GraphQLString),
     },
-  },
+  }),
 });
 
 export const User = new GraphQLObjectType({

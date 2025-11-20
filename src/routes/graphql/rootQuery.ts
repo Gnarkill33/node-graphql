@@ -1,6 +1,7 @@
 import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { MemberType, MemberTypeIdEnum, User } from './queryTypes.js';
 import { PrismaClient } from '@prisma/client';
+import { UUIDType } from './types/uuid.js';
 
 export interface GraphQLContext {
   prisma: PrismaClient;
@@ -24,7 +25,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       type: MemberType,
       args: {
         id: {
-          type: MemberTypeIdEnum,
+          type: new GraphQLNonNull(MemberTypeIdEnum),
         },
       },
       resolve: async (_, { id }: Args, contextValue: GraphQLContext) => {
@@ -39,6 +40,21 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       resolve: async (_, __, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         return prisma.user.findMany();
+      },
+    },
+    user: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      type: User,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return prisma.user.findUnique({
+          where: { id },
+        });
       },
     },
   }),
