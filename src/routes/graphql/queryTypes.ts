@@ -6,7 +6,7 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 
-const MemberTypeIdEnum = new GraphQLEnumType({
+export const MemberTypeIdEnum = new GraphQLEnumType({
   name: 'enum',
   values: {
     BASIC: {
