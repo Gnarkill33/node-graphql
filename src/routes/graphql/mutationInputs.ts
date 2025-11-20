@@ -16,3 +16,5 @@ export const CreateUserInput = new GraphQLInputObjectType({
     },
   }),
 });
+
+// createProfile(dto: CreateProfileInput!): Profile!
