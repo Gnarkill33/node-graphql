@@ -6,6 +6,10 @@ export interface GraphQLContext {
   prisma: PrismaClient;
 }
 
+interface Args {
+  id: 'BUSINESS' | 'BASIC';
+}
+
 export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
   name: 'RootQueryType',
   fields: () => ({
@@ -23,7 +27,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
           type: MemberTypeIdEnum,
         },
       },
-      resolve: async (_, { id }, contextValue: GraphQLContext) => {
+      resolve: async (_, { id }: Args, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         return prisma.memberType.findUnique({
           where: { id },
