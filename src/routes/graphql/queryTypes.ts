@@ -1,4 +1,5 @@
 import {
+  GraphQLList,
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLFloat,
@@ -54,9 +55,24 @@ export const Profile = new GraphQLObjectType({
   },
 });
 
+export const Post = new GraphQLObjectType({
+  name: 'Post',
+  fields: {
+    id: {
+      type: new GraphQLNonNull(UUIDType),
+    },
+    title: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    content: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+  },
+});
+
 export const User = new GraphQLObjectType({
   name: 'User',
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(UUIDType),
     },
@@ -69,8 +85,14 @@ export const User = new GraphQLObjectType({
     profile: {
       type: Profile,
     },
-    // posts: {},
-    // userSubscribedTo: {},
-    // subscribedToUser: {},
-  },
+    posts: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
+    },
+    userSubscribedTo: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+    },
+    subscribedToUser: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+    },
+  }),
 });

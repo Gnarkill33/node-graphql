@@ -36,7 +36,10 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
     },
     users: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
-      resolve: () => {},
+      resolve: async (_, __, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return prisma.user.findMany();
+      },
     },
   }),
 });
