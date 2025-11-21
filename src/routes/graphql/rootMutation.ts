@@ -3,6 +3,7 @@ import { GraphQLContext } from './rootQuery.js';
 import { Post, Profile, User } from './queryTypes.js';
 import {
   ChangePostInput,
+  ChangeProfileInput,
   CreatePostInput,
   CreateProfileInput,
   CreateUserInput,
@@ -30,6 +31,12 @@ interface CreatePostArgs {
 interface ChangePostArgs {
   title: string;
   content: string;
+}
+
+interface ChangeProfileArgs {
+  isMale: boolean;
+  yearOfBirth: number;
+  memberTypeId: 'BASIC' | 'BUSINESS';
 }
 
 export const Mutations = new GraphQLObjectType({
@@ -115,6 +122,34 @@ export const Mutations = new GraphQLObjectType({
           data: {
             title: dto.title,
             content: dto.content,
+          },
+          where: { id },
+        });
+
+        return changedPost;
+      },
+    },
+    changeProfile: {
+      type: new GraphQLNonNull(Profile),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangeProfileInput),
+        },
+      },
+      resolve: async (
+        _,
+        { id, dto }: { id: string; dto: ChangeProfileArgs },
+        contextValue: GraphQLContext,
+      ) => {
+        const { prisma } = contextValue;
+        const changedPost = prisma.profile.update({
+          data: {
+            isMale: dto.isMale,
+            yearOfBirth: dto.yearOfBirth,
+            memberTypeId: dto.memberTypeId,
           },
           where: { id },
         });
