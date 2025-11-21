@@ -18,7 +18,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(MemberType))),
       resolve: async (_, __, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.memberType.findMany();
+        return await prisma.memberType.findMany();
       },
     },
     memberType: {
@@ -30,7 +30,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
       resolve: async (_, { id }: MemberTypeArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.memberType.findUnique({
+        return await prisma.memberType.findUnique({
           where: { id },
         });
       },
@@ -39,7 +39,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
       resolve: async (_, __, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.user.findMany();
+        return await prisma.user.findMany();
       },
     },
     user: {
@@ -52,7 +52,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
       resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.user.findUnique({
+        return await prisma.user.findUnique({
           where: { id },
         });
       },
@@ -61,7 +61,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
       resolve: async (_, __, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.post.findMany();
+        return await prisma.post.findMany();
       },
     },
     post: {
@@ -73,7 +73,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
       resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.post.findUnique({
+        return await prisma.post.findUnique({
           where: { id },
         });
       },
@@ -82,7 +82,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Profile))),
       resolve: async (_, __, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.profile.findMany();
+        return await prisma.profile.findMany();
       },
     },
     profile: {
@@ -94,7 +94,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
       resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        return prisma.profile.findUnique({
+        return await prisma.profile.findUnique({
           where: { id },
         });
       },

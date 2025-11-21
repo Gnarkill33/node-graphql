@@ -14,9 +14,11 @@ export const MemberTypeIdEnum = new GraphQLEnumType({
   name: 'enum',
   values: {
     BASIC: {
+      value: 'BASIC',
       description: 'Basic member',
     },
     BUSINESS: {
+      value: 'BUSINESS',
       description: 'Business member',
     },
   },
