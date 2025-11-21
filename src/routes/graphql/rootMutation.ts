@@ -50,7 +50,11 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreateUserInput),
         },
       },
-      resolve: async (_, dto: CreateUserArgs, contextValue: GraphQLContext) => {
+      resolve: async (
+        _,
+        { dto }: { dto: CreateUserArgs },
+        contextValue: GraphQLContext,
+      ) => {
         const { prisma } = contextValue;
         const newUser = await prisma.user.create({
           data: {
@@ -69,7 +73,11 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreateProfileInput),
         },
       },
-      resolve: async (_, dto: CreateProfileArgs, contextValue: GraphQLContext) => {
+      resolve: async (
+        _,
+        { dto }: { dto: CreateProfileArgs },
+        contextValue: GraphQLContext,
+      ) => {
         const { prisma } = contextValue;
         const newProfile = await prisma.profile.create({
           data: {
@@ -90,7 +98,11 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreatePostInput),
         },
       },
-      resolve: async (_, dto: CreatePostArgs, contextValue: GraphQLContext) => {
+      resolve: async (
+        _,
+        { dto }: { dto: CreatePostArgs },
+        contextValue: GraphQLContext,
+      ) => {
         const { prisma } = contextValue;
         const newPost = await prisma.post.create({
           data: {
