@@ -2,33 +2,34 @@ import { GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { GraphQLContext } from './rootQuery.js';
 import { Post, Profile, User } from './queryTypes.js';
 import {
+  ChangePostInput,
   CreatePostInput,
   CreateProfileInput,
   CreateUserInput,
 } from './mutationInputs.js';
+import { UUIDType } from './types/uuid.js';
 
 interface CreateUserArgs {
-  dto: {
-    name: string;
-    balance: number;
-  };
+  name: string;
+  balance: number;
 }
 
 interface CreateProfileArgs {
-  dto: {
-    isMale: boolean;
-    yearOfBirth: number;
-    userId: string;
-    memberTypeId: 'BASIC' | 'BUSINESS';
-  };
+  isMale: boolean;
+  yearOfBirth: number;
+  userId: string;
+  memberTypeId: 'BASIC' | 'BUSINESS';
 }
 
 interface CreatePostArgs {
-  dto: {
-    title: string;
-    content: string;
-    authorId: string;
-  };
+  title: string;
+  content: string;
+  authorId: string;
+}
+
+interface ChangePostArgs {
+  title: string;
+  content: string;
 }
 
 export const Mutations = new GraphQLObjectType({
@@ -41,7 +42,7 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreateUserInput),
         },
       },
-      resolve: async (_, { dto }: CreateUserArgs, contextValue: GraphQLContext) => {
+      resolve: async (_, dto: CreateUserArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         const newUser = prisma.user.create({
           data: {
@@ -60,7 +61,7 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreateProfileInput),
         },
       },
-      resolve: async (_, { dto }: CreateProfileArgs, contextValue: GraphQLContext) => {
+      resolve: async (_, dto: CreateProfileArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         const newProfile = prisma.profile.create({
           data: {
@@ -81,7 +82,7 @@ export const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(CreatePostInput),
         },
       },
-      resolve: async (_, { dto }: CreatePostArgs, contextValue: GraphQLContext) => {
+      resolve: async (_, dto: CreatePostArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
         const newPost = prisma.post.create({
           data: {
@@ -92,6 +93,33 @@ export const Mutations = new GraphQLObjectType({
         });
 
         return newPost;
+      },
+    },
+    changePost: {
+      type: new GraphQLNonNull(Post),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangePostInput),
+        },
+      },
+      resolve: async (
+        _,
+        { id, dto }: { id: string; dto: ChangePostArgs },
+        contextValue: GraphQLContext,
+      ) => {
+        const { prisma } = contextValue;
+        const changedPost = prisma.post.update({
+          data: {
+            title: dto.title,
+            content: dto.content,
+          },
+          where: { id },
+        });
+
+        return changedPost;
       },
     },
   }),
