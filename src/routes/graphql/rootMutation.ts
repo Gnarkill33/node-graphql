@@ -4,6 +4,7 @@ import { Post, Profile, User } from './queryTypes.js';
 import {
   ChangePostInput,
   ChangeProfileInput,
+  ChangeUserInput,
   CreatePostInput,
   CreateProfileInput,
   CreateUserInput,
@@ -145,7 +146,7 @@ export const Mutations = new GraphQLObjectType({
         contextValue: GraphQLContext,
       ) => {
         const { prisma } = contextValue;
-        const changedPost = prisma.profile.update({
+        const changedProfile = prisma.profile.update({
           data: {
             isMale: dto.isMale,
             yearOfBirth: dto.yearOfBirth,
@@ -154,7 +155,34 @@ export const Mutations = new GraphQLObjectType({
           where: { id },
         });
 
-        return changedPost;
+        return changedProfile;
+      },
+    },
+    changeUser: {
+      type: new GraphQLNonNull(User),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangeUserInput),
+        },
+      },
+      resolve: async (
+        _,
+        { id, dto }: { id: string; dto: CreateUserArgs },
+        contextValue: GraphQLContext,
+      ) => {
+        const { prisma } = contextValue;
+        const changedUser = prisma.user.update({
+          data: {
+            name: dto.name,
+            balance: dto.balance,
+          },
+          where: { id },
+        });
+
+        return changedUser;
       },
     },
   }),
