@@ -246,5 +246,27 @@ export const Mutations = new GraphQLObjectType({
         return 'User subscribed to author';
       },
     },
+    unsubscribeFrom: {
+      type: new GraphQLNonNull(GraphQLString),
+      args: {
+        userId: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+        authorId: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (
+        _,
+        { userId, authorId }: { userId: string; authorId: string },
+        contextValue: GraphQLContext,
+      ) => {
+        const { prisma } = contextValue;
+        await prisma.subscribersOnAuthors.delete({
+          where: { subscriberId_authorId: { subscriberId: userId, authorId } },
+        });
+        return 'User unsubscribed from author';
+      },
+    },
   }),
 });
