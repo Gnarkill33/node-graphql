@@ -52,7 +52,7 @@ export const Mutations = new GraphQLObjectType({
       },
       resolve: async (_, dto: CreateUserArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        const newUser = prisma.user.create({
+        const newUser = await prisma.user.create({
           data: {
             name: dto.name,
             balance: dto.balance,
@@ -71,7 +71,7 @@ export const Mutations = new GraphQLObjectType({
       },
       resolve: async (_, dto: CreateProfileArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        const newProfile = prisma.profile.create({
+        const newProfile = await prisma.profile.create({
           data: {
             isMale: dto.isMale,
             yearOfBirth: dto.yearOfBirth,
@@ -92,7 +92,7 @@ export const Mutations = new GraphQLObjectType({
       },
       resolve: async (_, dto: CreatePostArgs, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        const newPost = prisma.post.create({
+        const newPost = await prisma.post.create({
           data: {
             title: dto.title,
             content: dto.content,
@@ -119,7 +119,7 @@ export const Mutations = new GraphQLObjectType({
         contextValue: GraphQLContext,
       ) => {
         const { prisma } = contextValue;
-        const changedPost = prisma.post.update({
+        const changedPost = await prisma.post.update({
           data: {
             title: dto.title,
             content: dto.content,
@@ -146,7 +146,7 @@ export const Mutations = new GraphQLObjectType({
         contextValue: GraphQLContext,
       ) => {
         const { prisma } = contextValue;
-        const changedProfile = prisma.profile.update({
+        const changedProfile = await prisma.profile.update({
           data: {
             isMale: dto.isMale,
             yearOfBirth: dto.yearOfBirth,
@@ -174,7 +174,7 @@ export const Mutations = new GraphQLObjectType({
         contextValue: GraphQLContext,
       ) => {
         const { prisma } = contextValue;
-        const changedUser = prisma.user.update({
+        const changedUser = await prisma.user.update({
           data: {
             name: dto.name,
             balance: dto.balance,
@@ -194,8 +194,21 @@ export const Mutations = new GraphQLObjectType({
       },
       resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
         const { prisma } = contextValue;
-        const data = prisma.user.delete({ where: { id } });
-        return JSON.stringify(data);
+        await prisma.user.delete({ where: { id } });
+        return 'User deleted';
+      },
+    },
+    deletePost: {
+      type: new GraphQLNonNull(GraphQLString),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        await prisma.post.delete({ where: { id } });
+        return 'Post deleted';
       },
     },
   }),
