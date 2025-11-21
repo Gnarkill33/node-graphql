@@ -211,5 +211,18 @@ export const Mutations = new GraphQLObjectType({
         return 'Post deleted';
       },
     },
+    deleteProfile: {
+      type: new GraphQLNonNull(GraphQLString),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        await prisma.profile.delete({ where: { id } });
+        return 'Profile deleted';
+      },
+    },
   }),
 });
