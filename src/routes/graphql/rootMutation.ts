@@ -224,5 +224,27 @@ export const Mutations = new GraphQLObjectType({
         return 'Profile deleted';
       },
     },
+    subscribeTo: {
+      type: new GraphQLNonNull(GraphQLString),
+      args: {
+        userId: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+        authorId: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (
+        _,
+        { userId, authorId }: { userId: string; authorId: string },
+        contextValue: GraphQLContext,
+      ) => {
+        const { prisma } = contextValue;
+        await prisma.subscribersOnAuthors.create({
+          data: { subscriberId: userId, authorId },
+        });
+        return 'User subscribed to author';
+      },
+    },
   }),
 });
