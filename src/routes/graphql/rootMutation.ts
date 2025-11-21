@@ -1,4 +1,4 @@
-import { GraphQLNonNull, GraphQLObjectType } from 'graphql';
+import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 import { GraphQLContext } from './rootQuery.js';
 import { Post, Profile, User } from './queryTypes.js';
 import {
@@ -183,6 +183,19 @@ export const Mutations = new GraphQLObjectType({
         });
 
         return changedUser;
+      },
+    },
+    deleteUser: {
+      type: new GraphQLNonNull(GraphQLString),
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType),
+        },
+      },
+      resolve: async (_, { id }: { id: string }, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        const data = prisma.user.delete({ where: { id } });
+        return JSON.stringify(data);
       },
     },
   }),
