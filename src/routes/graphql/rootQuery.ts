@@ -22,7 +22,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
     },
     memberType: {
-      type: MemberType,
+      type: new GraphQLNonNull(MemberType),
       args: {
         id: {
           type: new GraphQLNonNull(MemberTypeIdEnum),
@@ -43,8 +43,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
     },
     user: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      type: User,
+      type: new GraphQLNonNull(User),
       args: {
         id: {
           type: new GraphQLNonNull(UUIDType),
@@ -65,7 +64,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
     },
     post: {
-      type: Post,
+      type: new GraphQLNonNull(Post),
       args: {
         id: {
           type: new GraphQLNonNull(UUIDType),
@@ -86,7 +85,7 @@ export const RootQueryType = new GraphQLObjectType<GraphQLContext>({
       },
     },
     profile: {
-      type: Profile,
+      type: new GraphQLNonNull(Profile),
       args: {
         id: {
           type: new GraphQLNonNull(UUIDType),

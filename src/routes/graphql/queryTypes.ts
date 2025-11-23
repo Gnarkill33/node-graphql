@@ -9,9 +9,16 @@ import {
   GraphQLString,
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
+import { GraphQLContext } from './rootQuery.js';
+import {
+  Profile as PrismaProfile,
+  MemberType as PrismaMemberType,
+  Post as PrismaPost,
+  User as PrismaUser,
+} from '@prisma/client';
 
 export const MemberTypeIdEnum = new GraphQLEnumType({
-  name: 'enum',
+  name: 'MemberTypeId',
   values: {
     BASIC: {
       value: 'BASIC',
@@ -36,6 +43,15 @@ export const MemberType = new GraphQLObjectType({
     postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
     },
+    profiles: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Profile))),
+      resolve: async (source: PrismaMemberType, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.profile.findMany({
+          where: { memberTypeId: source.id },
+        });
+      },
+    },
   }),
 });
 
@@ -53,6 +69,21 @@ export const Profile = new GraphQLObjectType({
     },
     memberType: {
       type: new GraphQLNonNull(MemberType),
+      resolve: async (source: PrismaProfile, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.memberType.findUnique({
+          where: { id: source.memberTypeId },
+        });
+      },
+    },
+    user: {
+      type: new GraphQLNonNull(User),
+      resolve: async (source: PrismaProfile, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.user.findUnique({
+          where: { id: source.userId },
+        });
+      },
     },
   }),
 });
@@ -68,6 +99,15 @@ export const Post = new GraphQLObjectType({
     },
     content: {
       type: new GraphQLNonNull(GraphQLString),
+    },
+    author: {
+      type: new GraphQLNonNull(User),
+      resolve: async (source: PrismaPost, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.user.findUnique({
+          where: { id: source.authorId },
+        });
+      },
     },
   }),
 });
@@ -85,16 +125,44 @@ export const User = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLFloat),
     },
     profile: {
-      type: Profile,
+      type: new GraphQLNonNull(Profile),
+      resolve: async (source: PrismaUser, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.profile.findUnique({
+          where: { userId: source.id },
+        });
+      },
     },
     posts: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
+      resolve: async (source: PrismaUser, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        return await prisma.post.findMany({
+          where: { authorId: source.id },
+        });
+      },
     },
     userSubscribedTo: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+      resolve: async (source: PrismaUser, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        const subscriptions = await prisma.subscribersOnAuthors.findMany({
+          where: { subscriberId: source.id },
+          include: { author: true },
+        });
+        return subscriptions.map((sub) => sub.author);
+      },
     },
     subscribedToUser: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+      resolve: async (source: PrismaUser, _, contextValue: GraphQLContext) => {
+        const { prisma } = contextValue;
+        const subscribers = await prisma.subscribersOnAuthors.findMany({
+          where: { authorId: source.id },
+          include: { subscriber: true },
+        });
+        return subscribers.map((sub) => sub.subscriber);
+      },
     },
   }),
 });
